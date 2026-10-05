@@ -1,12 +1,15 @@
+import { isAdminUser } from "./Auth/roles";
+
 const labels = {
   start: "Home",
   quiz: "Exam in progress",
   result: "Result",
   panel: "Student Panel",
   detail: "Record details",
+  login: "Sign in",
 };
 
-function Header({ screen, theme, onToggleTheme, onNav }) {
+function Header({ screen, theme, onToggleTheme, onNav, user, onLogout }) {
   const dark = theme === "dark";
   const inPanel = screen === "panel" || screen === "detail";
   return (
@@ -23,6 +26,23 @@ function Header({ screen, theme, onToggleTheme, onNav }) {
           <button type="button" className={`nav-btn ${inPanel ? "on" : ""}`} onClick={() => onNav("panel")}>
             📊 <b>Student Panel</b>
           </button>
+
+          {user ? (
+            <>
+              {isAdminUser(user) && (
+                <button type="button" className="nav-btn" onClick={() => onNav("admin")}>
+                  🛠 <b>Dashboard</b>
+                </button>
+              )}
+              <span className="user-chip" title={user.email}>👤 <b>{user.name}</b></span>
+              <button type="button" className="nav-btn" onClick={onLogout}>Logout</button>
+            </>
+          ) : (
+            <button type="button" className={`nav-btn ${screen === "login" ? "on" : ""}`} onClick={() => onNav("login")}>
+              🔑 <b>Login</b>
+            </button>
+          )}
+
           <button
             type="button"
             className="theme-btn"

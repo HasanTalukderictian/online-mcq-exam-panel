@@ -122,4 +122,4 @@ function StartScreen({ initial, onStart }) {
   );
 }
 
-export default StartScreen;
+export default StartScreen;  
