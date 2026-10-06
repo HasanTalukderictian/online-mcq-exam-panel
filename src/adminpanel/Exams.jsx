@@ -14,20 +14,6 @@ function Exams({ token, onUnauthorized, go, subjectId }) {
     const [saving, setSaving] = useState(false);
     const [toast, say] = useToast();
 
-
-
-
-    const [defaults, setDefaults] = useState({ duration: 120, pass_mark: 60 });
-
-    useEffect(() => {
-        apiRequest("/admin/settings", { token })
-            .then((b) => {
-                const v = (getData(b) || {}).values || {};
-                setDefaults({ duration: v.default_duration || 120, pass_mark: v.default_pass_mark || 60 });
-            })
-            .catch(() => { });
-    }, []);
-
     const expired = (err) => {
         if (err.status === 401) {
             onUnauthorized();
