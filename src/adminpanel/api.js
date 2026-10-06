@@ -8,7 +8,7 @@ export class ApiError extends Error {
     }
 }
 
-// Calls the Laravel API with the Bearer token
+// Calls the Laravel API with the Bearer token. Returns the parsed JSON body.
 export async function apiRequest(path, options = {}) {
     const method = options.method || "GET";
     const headers = { Accept: "application/json" };
@@ -36,3 +36,25 @@ export async function apiRequest(path, options = {}) {
     }
     return data;
 }
+
+// { success, message, data } -> data
+export const getData = (body) => (body && body.data !== undefined ? body.data : body);
+
+// list can be [..] or { data: [..] }
+export const pickList = (body) => {
+    const d = getData(body);
+    if (Array.isArray(d)) return d;
+    if (d && Array.isArray(d.data)) return d.data;
+    return [];
+};
+
+// Laravel 422 errors -> { field: "first message" }
+export const fieldErrors = (err) => {
+    const out = {};
+    const e = (err && err.errors) || {};
+    Object.keys(e).forEach((k) => {
+        const v = e[k];
+        out[k] = Array.isArray(v) ? v[0] : String(v);
+    });
+    return out;
+};

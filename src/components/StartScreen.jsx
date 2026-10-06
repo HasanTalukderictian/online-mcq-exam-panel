@@ -1,125 +1,140 @@
 import { useState } from "react";
 import Hero from "./Hero";
 import Features from "./Features";
-import { subjects } from "../data/questions";
-import { getRecords, findAttempt } from "../utils/storage";
+import { fmtTime } from "../adminpanel/ui";
 
-// Used only if an exam has no `time` field (seconds).
-const DEFAULT_TIME = 120;
+function StartScreen({ catalog, user, site, onStart, starting, startError, onLogin, onRetry }) {
+  const [subjectId, setSubjectId] = useState(null);
+  const [examId, setExamId] = useState(null);
 
-const fmtTime = (t) => {
-  const m = Math.floor(t / 60), s = t % 60;
-  return m && s ? `${m}m ${s}s` : m ? `${m} min` : `${s}s`;
-};
-
-function StartScreen({ initial, onStart }) {
-  const [name, setName] = useState(initial.name);
-  const [subject, setSubject] = useState(initial.subject);
-  const [examId, setExamId] = useState(initial.examId);
-  const [error, setError] = useState("");
-
-  const exams = subjects[subject].exams;
-  const exam = exams.find((e) => e.id === examId) || exams[0];
-  const time = exam.time ?? DEFAULT_TIME;
-
-  // One attempt per student per exam (read fresh from storage on every render)
-  const all = getRecords();
-  const attempt = (subjectId, examId) => findAttempt(name, subjectId, examId, all);
-  const taken = !!attempt(subject, exam.id);
+  const list = catalog.subjects;
+  const subj = list.find((s) => String(s.id) === String(subjectId)) || list[0];
+  const exams = subj ? subj.exams : [];
+  const exam =
+    exams.find((e) => String(e.id) === String(examId)) ||
+    exams.find((e) => !e.completed) ||
+    exams[0];
 
   const pickSubject = (id) => {
-    setSubject(id);
-    setExamId(subjects[id].exams[0].id); // reset to first exam of that subject
+    setSubjectId(id);
+    setExamId(null);
   };
 
-  const begin = () => {
-    if (!name.trim()) return setError("Please enter your name to continue.");
-    if (findAttempt(name, subject, exam.id)) return setError("You have already taken this exam. Each exam can be taken only once.");
-    onStart(name.trim(), subject, exam.id, time);
-  };
+  let body;
+  if (catalog.loading && !list.length) {
+    body = <div className="panel loading-box">Loading subjects...</div>;
+  } else if (catalog.error) {
+    body = (
+      <div className="panel loading-box">
+        <p>Could not load the exams: {catalog.error}</p>
+        <button className="btn" onClick={onRetry}>Try again</button>
+      </div>
+    );
+  } else if (!list.length) {
+    body = (
+      <div className="panel loading-box">
+        <h2>No exams available yet</h2>
+        <p>Please check back soon.</p>
+      </div>
+    );
+  } else {
+    const taken = !!exam.completed;
+    const pass = exam.pass_mark || 60;
+
+    let label = "Start " + exam.name;
+    if (!user) label = "Sign up to start";
+    else if (taken) label = "Already taken";
+    else if (starting) label = "Loading exam...";
+
+    body = (
+      <>
+        <div className="panel">
+          <h1>Start your exam</h1>
+          <p className="sub">Choose a subject and an exam.</p>
+
+          {user ? (
+            <div className="acct in">👤 Exam as <b>{user.name}</b></div>
+          ) : (
+            <div className="acct">
+              🔒 Sign up (free) to take an exam. Already registered?{" "}
+              <button type="button" className="link-btn" onClick={onLogin}>Log in</button>
+            </div>
+          )}
+
+          <div className="pick-scroll">
+            <span className="label" id="subjects-label">Subject</span>
+            <div className="subjects">
+              {list.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={"subj " + (subj.id === s.id ? "on" : "")}
+                  style={{ "--c": s.color }}
+                  onClick={() => pickSubject(s.id)}
+                >
+                  <span>{s.icon}</span>{s.name}
+                </button>
+              ))}
+            </div>
+
+            <span className="label">Exam</span>
+            <div className="exam-list">
+              {exams.map((e) => (
+                <button
+                  key={e.id}
+                  type="button"
+                  className={"exam-opt " + (exam.id === e.id && !e.completed ? "on" : "") + (e.completed ? " done" : "")}
+                  disabled={e.completed}
+                  onClick={() => setExamId(e.id)}
+                >
+                  <b>{e.name}</b>
+                  <small>
+                    {e.completed
+                      ? "✓ Completed · " + e.percent + "%"
+                      : e.questions_count + " questions · " + fmtTime(e.time)}
+                  </small>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {startError && <div className="err">{startError}</div>}
+          {taken && !startError && <div className="err">You have already taken {exam.name}. Please choose another exam.</div>}
+        </div>
+
+        <div className="panel rules">
+          <h2>Instructions</h2>
+          <ul>
+            <li>Each question has one correct answer.</li>
+            <li>Use the question palette to jump to any question.</li>
+            <li>Mark a question for review if you are unsure.</li>
+            <li>The exam submits automatically when time runs out.</li>
+            <li>You need {pass}% to pass.</li>
+          </ul>
+          <div className="facts">
+            <div><b>{exam.questions_count}</b><small>Questions</small></div>
+            <div><b>{fmtTime(exam.time)}</b><small>Duration</small></div>
+            <div><b>{pass}%</b><small>Pass mark</small></div>
+          </div>
+          <button
+            className="btn full"
+            disabled={site.maintenance_mode || (user ? taken || starting : false)}
+            onClick={() => onStart(exam.id)}
+          >
+            {site.maintenance_mode ? "Exams are closed" : label}
+          </button>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
-      <Hero />
+      <Hero stats={catalog.stats} loading={catalog.loading} />
       <Features />
-      <div className="start" id="exam-section">
-      <div className="panel">
-        <h1>Start your exam</h1>
-        <p className="sub">Enter your details, then choose a subject and an exam.</p>
-
-        <label className="label" htmlFor="name">Candidate name</label>
-        <input
-          id="name"
-          className="field"
-          value={name}
-          placeholder="Your full name"
-          onChange={(e) => { setName(e.target.value); setError(""); }}
-        />
-
-        <div className="pick-scroll">
-        <span className="label" id="subjects-label">Subject</span>
-        <div className="subjects">
-          {Object.values(subjects).map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              className={`subj ${subject === s.id ? "on" : ""}`}
-              style={{ "--c": s.color }}
-              onClick={() => pickSubject(s.id)}
-            >
-              <span>{s.icon}</span>{s.name}
-            </button>
-          ))}
-        </div>
-
-        <span className="label">Exam</span>
-        <div className="exam-list">
-          {exams.map((e) => {
-            const rec = attempt(subject, e.id);
-            return (
-              <button
-                key={e.id}
-                type="button"
-                className={`exam-opt ${exam.id === e.id && !rec ? "on" : ""} ${rec ? "done" : ""}`}
-                disabled={!!rec}
-                onClick={() => setExamId(e.id)}
-              >
-                <b>{e.name}</b>
-                <small>
-                  {rec
-                    ? `✓ Completed · ${rec.percent}%`
-                    : `${e.questions.length} questions · ${fmtTime(e.time ?? DEFAULT_TIME)}`}
-                </small>
-              </button>
-            );
-          })}
-        </div>
-        </div>
-        {error && <div className="err">{error}</div>}
-        {taken && !error && <div className="err">You have already taken {exam.name}. Please choose another exam.</div>}
-      </div>
-
-      <div className="panel rules">
-        <h2>Instructions</h2>
-        <ul>
-          <li>Each question has one correct answer.</li>
-          <li>Use the question palette to jump to any question.</li>
-          <li>Mark a question for review if you are unsure.</li>
-          <li>The exam submits automatically when time runs out.</li>
-          <li>You need 60% to pass.</li>
-        </ul>
-        <div className="facts">
-          <div><b>{exam.questions.length}</b><small>Questions</small></div>
-          <div><b>{fmtTime(time)}</b><small>Duration</small></div>
-          <div><b>60%</b><small>Pass mark</small></div>
-        </div>
-        <button className="btn full" onClick={begin} disabled={taken}>
-          {taken ? "Already taken" : `Start ${exam.name}`}
-        </button>
-      </div>
-      </div>
+      <div className="start" id="exam-section">{body}</div>
     </>
   );
 }
 
-export default StartScreen;  
+export default StartScreen;

@@ -1,16 +1,25 @@
 import { useState } from "react";
 import Dashboard from "./Dashboard";
+import Subjects from "./Subjects";
+import Exams from "./Exams";
+import Questions from "./Questions";
 import Users from "./Users";
-import "../adminpanel/css/admin.css";
+import "./css/admin.css";
+import "./css/admin-extra.css";
+import Students from "./Students";
+import ImportJson from "./Importjson ";
+import Settings from "./Settings";
+import Results from "./Results";
 
 const MENU = [
     { id: "dashboard", icon: "📊", label: "Dashboard" },
     { id: "subjects", icon: "📚", label: "Subjects" },
     { id: "exams", icon: "📝", label: "Exams" },
     { id: "questions", icon: "❓", label: "Questions" },
+    { id: "import", icon: "⬆️", label: "Import JSON" },
+    { id: "users", icon: "👤", label: "Users" },
     { id: "students", icon: "👥", label: "Students" },
     { id: "results", icon: "🏆", label: "Results" },
-    { id: "users", icon: "👤", label: "Users" },
     { id: "settings", icon: "⚙️", label: "Settings" },
 ];
 
@@ -24,8 +33,9 @@ function ComingSoon({ title }) {
     );
 }
 
-function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit }) {
+function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit, onUserUpdate }){
     const [page, setPage] = useState("dashboard");
+    const [params, setParams] = useState({});
     const [open, setOpen] = useState(false);
 
     const u = user || {};
@@ -33,15 +43,26 @@ function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit }) {
     const current = MENU.find((m) => m.id === page) || MENU[0];
     const initial = (u.name ? u.name : "A").charAt(0).toUpperCase();
 
-    const choose = (id) => {
+    // go to a page, optionally with a filter (e.g. go("exams", { subject_id: 3 }))
+    const choose = (id, p) => {
         setPage(id);
+        setParams(p || {});
         setOpen(false);
         window.scrollTo({ top: 0 });
     };
 
+    const common = { token: token, onUnauthorized: onLogout, go: choose };
+
     let content;
-    if (page === "dashboard") content = <Dashboard user={u} go={choose} />;
+    if (page === "dashboard") content = <Dashboard user={u} {...common} />;
+    else if (page === "subjects") content = <Subjects {...common} />;
+    else if (page === "exams") content = <Exams key={"e" + (params.subject_id || "all")} subjectId={params.subject_id} {...common} />;
+    else if (page === "questions") content = <Questions key={"q" + (params.exam_id || "all")} examId={params.exam_id} {...common} />;
+    else if (page === "students") content = <Students token={token} onUnauthorized={onLogout} />;
+    else if (page === "import") content = <ImportJson {...common} />;
     else if (page === "users") content = <Users token={token} me={u} onUnauthorized={onLogout} />;
+    else if (page === "results") content = <Results token={token} onUnauthorized={onLogout} />;
+    else if (page === "settings") content = <Settings token={token} user={u} onUnauthorized={onLogout} onUserUpdate={onUserUpdate} />;
     else content = <ComingSoon title={current.label} />;
 
     return (

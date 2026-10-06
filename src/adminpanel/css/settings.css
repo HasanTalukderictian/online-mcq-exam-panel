@@ -1,0 +1,187 @@
+.set-wrap {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.set-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    position: sticky;
+    top: 84px;
+}
+
+.set-tabs button {
+    text-align: left;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    padding: 11px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.set-tabs button:hover {
+    background: var(--paper);
+}
+
+.set-tabs button.on {
+    background: var(--primary);
+    color: #fff;
+}
+
+.set-body {
+    min-width: 0;
+}
+
+.set-card {
+    max-width: 680px;
+}
+
+.set-card h3 {
+    margin: 0 0 4px;
+}
+
+.set-card>.adm-muted,
+.set-card .adm-muted:first-of-type {
+    margin: 0 0 14px;
+}
+
+.set-field {
+    margin-bottom: 14px;
+}
+
+.set-field .label {
+    margin-top: 0;
+}
+
+.set-field small {
+    display: block;
+    margin-top: 4px;
+}
+
+textarea.field {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.set-card form,
+form.set-card {
+    display: block;
+}
+
+.set-card .btn {
+    margin-top: 8px;
+}
+
+.set-toggle {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+    position: relative;
+}
+
+.set-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.set-toggle .sw {
+    flex: none;
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--line);
+    position: relative;
+    transition: background .2s;
+    margin-top: 2px;
+}
+
+.set-toggle .sw::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .2s;
+}
+
+.set-toggle input:checked+.sw {
+    background: var(--ok);
+}
+
+.set-toggle input:checked+.sw::after {
+    transform: translateX(20px);
+}
+
+.set-toggle input:focus-visible+.sw {
+    outline: 3px solid #9aa6ff;
+    outline-offset: 2px;
+}
+
+.set-toggle .tx b {
+    display: block;
+    font-size: 14px;
+}
+
+.set-toggle .tx small {
+    display: block;
+    color: var(--muted);
+    margin-top: 2px;
+    font-size: 13px;
+}
+
+.danger-card {
+    border-color: var(--bad);
+    background: color-mix(in srgb, var(--bad) 6%, var(--card));
+    margin-bottom: 16px;
+}
+
+.danger-card h3 {
+    color: var(--bad);
+}
+
+.danger-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.danger-row .field {
+    flex: 1;
+    min-width: 200px;
+}
+
+.danger-row .btn {
+    margin-top: 0;
+}
+
+@media (max-width: 800px) {
+    .set-wrap {
+        grid-template-columns: 1fr;
+    }
+    .set-tabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: static;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .set-toggle .sw,
+    .set-toggle .sw::after {
+        transition: none;
+    }
+}

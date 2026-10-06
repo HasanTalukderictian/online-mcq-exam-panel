@@ -1,0 +1,127 @@
+/* ---------- Subjects / Exams / Questions / Import (append to admin.css) ---------- */
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+.adm-modal.wide {
+    max-width: 640px;
+}
+
+textarea.field {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.adm-code {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 13px;
+    min-height: 260px;
+}
+
+.adm-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+}
+
+.adm-q:first-of-type {
+    border-top: 0;
+}
+
+.adm-q-main {
+    min-width: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.adm-q-main small {
+    display: block;
+}
+
+.opt-tag {
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    margin: 2px 4px 2px 0;
+}
+
+.opt-tag.ok {
+    background: var(--ok-soft);
+    color: var(--ok);
+    border-color: transparent;
+    font-weight: 700;
+}
+
+.adm-opt-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.adm-opt-row input[type="radio"] {
+    accent-color: var(--ok);
+    width: 18px;
+    height: 18px;
+    flex: none;
+}
+
+.adm-opt-row .field {
+    flex: 1;
+}
+
+.adm-pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.adm-quick {
+    display: grid;
+    gap: 10px;
+}
+
+.adm-quick button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.adm-quick button:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.adm-note.ok {
+    background: var(--ok-soft);
+    color: var(--ok);
+}
+
+@media (max-width: 700px) {
+    .adm-q {
+        flex-direction: column;
+    }
+}

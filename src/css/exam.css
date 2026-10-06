@@ -1640,3 +1640,141 @@ button.logo:hover i {
         display: none;
     }
 }
+
+
+/* start screen: account line + states */
+
+.acct {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    margin-top: 6px;
+    border: 1.5px dashed var(--line);
+    border-radius: 12px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.acct.in {
+    border-style: solid;
+    border-color: transparent;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.link-btn {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--primary);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.loading-box {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+}
+
+
+/* ---------- Sign up page ---------- */
+
+.auth.reg {
+    max-width: 1000px;
+}
+
+.rg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 14px;
+}
+
+.rg-field.full {
+    grid-column: 1 / -1;
+}
+
+.rg-field .label {
+    margin-top: 14px;
+}
+
+.rg-field .field {
+    padding: 12px 14px;
+}
+
+.auth-note {
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.auth-switch {
+    text-align: center;
+    margin: 16px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.f-err {
+    color: var(--bad);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.field.invalid {
+    border-color: var(--bad);
+}
+
+.nav-btn.solid {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.nav-btn.solid:hover,
+.nav-btn.solid.on {
+    background: #2537a8;
+    border-color: #2537a8;
+    color: #fff;
+}
+
+@media (max-width: 560px) {
+    .rg-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* maintenance banner + negative marking note */
+
+.maint {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 0 20px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: var(--warn-soft);
+    color: var(--warn);
+    font-weight: 600;
+    border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+}
+
+.neg-note {
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--warn-soft);
+    color: var(--warn);
+    font-size: 14px;
+    font-weight: 600;
+}

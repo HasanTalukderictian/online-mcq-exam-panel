@@ -1,0 +1,37 @@
+.adm-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 16px;
+}
+
+.adm-filters .fl label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.adm-filters .fl.wide {
+    grid-column: span 2;
+}
+
+.adm-filters .field {
+    width: 100%;
+    padding: 10px 12px;
+}
+
+.adm-filters .fl.btns {
+    display: flex;
+    gap: 8px;
+}
+
+@media (max-width: 560px) {
+    .adm-filters .fl.wide {
+        grid-column: auto;
+    }
+}
