@@ -2,8 +2,54 @@ import { useState } from "react";
 import { registerRequest, saveAuth } from "../Auth/Auth";
 
 const DEGREES = [
-    "B.Sc.", "B.A.", "B.B.A.", "B.Com.", "B.S.S.", "B.Sc. in Engineering",
-    "MBBS", "LL.B.", "B.Ed.", "Diploma", "M.Sc.", "M.A.", "MBA",
+    "CSE",
+    "ICT",
+    "ICE",
+    "EEE",
+    "ETE",
+    "ECE",
+    "Software Engineering",
+    "Computer Engineering",
+    "Computer Science",
+    "Information Technology",
+    "Information Systems",
+    "Data Science",
+    "Cyber Security",
+    "AI & Machine Learning",
+
+    "BBA",
+    "Management",
+    "Accounting",
+    "Finance",
+    "Marketing",
+    "Economics",
+    "English",
+    "Bangla",
+    "Law",
+    "Education",
+    "Political Science",
+    "Public Administration",
+    "Sociology",
+    "Social Work",
+    "Mathematics",
+    "Statistics",
+    "Physics",
+    "Chemistry",
+    "Biology",
+
+    "Civil Engineering",
+    "Mechanical Engineering",
+    "Electrical Engineering",
+    "Architecture",
+    "Textile Engineering",
+    "Industrial & Production Engineering",
+    "Chemical Engineering",
+
+    "Medicine",
+    "Nursing",
+    "Pharmacy",
+    "Agriculture",
+    "Others"
 ];
 
 const blank = {
@@ -137,7 +183,7 @@ function Register({ onSuccess, onSwitch, reason }) {
                         <input id="r-uni" className={cls("university")} placeholder="Your university"
                             value={form.university} onChange={set("university")} />
                     </Field>
-                    <Field id="r-degree" label="Graduation degree" error={fe.degree}>
+                    <Field id="r-degree" label="Graduation Subject" error={fe.degree}>
                         <input id="r-degree" className={cls("degree")} list="degree-list" placeholder="e.g. B.Sc."
                             value={form.degree} onChange={set("degree")} />
                         <datalist id="degree-list">

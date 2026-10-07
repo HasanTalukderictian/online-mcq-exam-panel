@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";
 import Subjects from "./Subjects";
 import Exams from "./Exams";
@@ -23,6 +23,17 @@ const MENU = [
     { id: "settings", icon: "⚙️", label: "Settings" },
 ];
 
+// the open admin page is remembered, so a refresh does not send you back to the dashboard
+const PAGE_KEY = "admin_page_v1"; // same key as in App.jsx
+
+const loadNav = () => {
+    try {
+        const v = JSON.parse(sessionStorage.getItem(PAGE_KEY));
+        if (v && MENU.some((m) => m.id === v.page)) return { page: v.page, params: v.params || {} };
+    } catch {}
+    return { page: "dashboard", params: {} };
+};
+
 function ComingSoon({ title }) {
     return (
         <div className="adm-card adm-soon">
@@ -34,19 +45,24 @@ function ComingSoon({ title }) {
 }
 
 function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit, onUserUpdate }) {
-    const [page, setPage] = useState("dashboard");
-    const [params, setParams] = useState({});
+    const [nav, setNav] = useState(loadNav); // { page, params }
     const [open, setOpen] = useState(false);
+
+    const page = nav.page;
+    const params = nav.params || {};
 
     const u = user || {};
     const dark = theme === "dark";
     const current = MENU.find((m) => m.id === page) || MENU[0];
     const initial = (u.name ? u.name : "A").charAt(0).toUpperCase();
 
-    // go to a page, optionally with a filter (e.g. go("exams", { subject_id: 3 }))
+    useEffect(() => {
+        try { sessionStorage.setItem(PAGE_KEY, JSON.stringify(nav)); } catch {}
+    }, [nav]);
+
+    // go to a page, optionally with a filter (e.g. choose("exams", { subject_id: 3 }))
     const choose = (id, p) => {
-        setPage(id);
-        setParams(p || {});
+        setNav({ page: id, params: p || {} });
         setOpen(false);
         window.scrollTo({ top: 0 });
     };

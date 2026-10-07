@@ -14,6 +14,30 @@ import { getAuth, clearAuth, logoutRequest, updateStoredUser } from "./component
 import { isAdminUser } from "./components/Auth/roles";
 import "./css/exam.css";
 
+const SCREEN_KEY = "app_screen_v1";
+const ADMIN_PAGE_KEY = "admin_page_v1"; // same key as in AdminPanel.jsx
+
+// Which page to show when the app starts (also after a refresh)
+const initialScreen = () => {
+    const a = getAuth();
+    let saved = "";
+    try {
+        saved = sessionStorage.getItem(SCREEN_KEY) || "";
+    } catch {}
+
+    // first time in this tab: an admin opens the dashboard, everybody else the home page
+    if (!saved) return a && isAdminUser(a.user) ? "admin" : "start";
+
+    // an exam in progress cannot be resumed after a refresh
+    if (saved === "quiz") return "start";
+    // result pages need data that is gone after a refresh: go to the history instead
+    if (saved === "result" || saved === "detail") return a ? "panel" : "start";
+    if (saved === "admin" && !(a && isAdminUser(a.user))) return "start";
+    if ((saved === "login" || saved === "register") && a) return "start";
+
+    return ["start", "login", "register", "panel", "admin"].includes(saved) ? saved : "start";
+};
+
 const DEFAULT_SITE = {
     site_name: "Online Exam Portal",
     site_tagline: "",
@@ -52,10 +76,7 @@ const toResult = (a) => {
 
 function App() {
     const [auth, setAuth] = useState(getAuth); // { user, token } or null
-    const [screen, setScreen] = useState(() => {
-        const a = getAuth();
-        return a && isAdminUser(a.user) ? "admin" : "start";
-    });
+    const [screen, setScreen] = useState(initialScreen);
     const [leaveAsk, setLeaveAsk] = useState(false);
     const [pending, setPending] = useState("start");
     const [pendingExam, setPendingExam] = useState(null); // exam a guest wanted to start
@@ -94,6 +115,22 @@ function App() {
         try { localStorage.setItem("theme", theme); } catch {}
     }, [theme]);
 
+    // remember the current page, so a refresh keeps you here
+    useEffect(() => {
+        try { sessionStorage.setItem(SCREEN_KEY, screen); } catch {}
+    }, [screen]);
+
+    // an exam cannot be resumed, so warn before the page is refreshed or closed
+    useEffect(() => {
+        if (screen !== "quiz") return undefined;
+        const warn = (e) => {
+            e.preventDefault();
+            e.returnValue = "";
+        };
+        window.addEventListener("beforeunload", warn);
+        return () => window.removeEventListener("beforeunload", warn);
+    }, [screen]);
+
     useEffect(() => {
         apiRequest("/public/settings")
             .then((b) => setSite({ ...DEFAULT_SITE, ...(getData(b) || {}) }))
@@ -120,8 +157,13 @@ function App() {
         loadCatalog();
     }, [token]);
 
+    const forgetAdminPage = () => {
+        try { sessionStorage.removeItem(ADMIN_PAGE_KEY); } catch {}
+    };
+
     const forceLogout = () => {
         clearAuth();
+        forgetAdminPage();
         setAuth(null);
         setScreen("login");
     };
@@ -169,6 +211,7 @@ function App() {
 
         if (isAdminUser(user)) {
             setPendingExam(null);
+            forgetAdminPage(); // a fresh login starts on the dashboard
             setScreen("admin");
             return;
         }
@@ -252,6 +295,7 @@ function App() {
     const logout = () => {
         if (auth) logoutRequest(auth.token);
         clearAuth();
+        forgetAdminPage();
         setAuth(null);
         setSession(null);
         setPendingExam(null);

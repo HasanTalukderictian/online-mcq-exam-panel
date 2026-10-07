@@ -1778,3 +1778,134 @@ button.logo:hover i {
     font-size: 14px;
     font-weight: 600;
 }
+
+
+/* hero: 4 stats */
+
+.hero-stats {
+    flex-wrap: wrap;
+    row-gap: 16px;
+}
+
+.hero-stats div {
+    padding-right: 22px;
+    margin-right: 22px;
+}
+
+.hero-stats b {
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+    .hero-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .hero-stats div {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+}
+
+
+/* subject showcase */
+
+.subj-sec {
+    width: 100%;
+    max-width: 1040px;
+    margin-bottom: 20px;
+    scroll-margin-top: 84px;
+}
+
+.subj-sec .feat-head {
+    margin-bottom: 20px;
+}
+
+.subj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.subj-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    padding: 20px 20px 18px 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+
+.subj-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: var(--c);
+}
+
+.subj-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--c);
+    box-shadow: 0 10px 24px rgba(22, 33, 62, .1);
+}
+
+.subj-card b {
+    font-size: 16px;
+}
+
+.subj-card small {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.subj-ico {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+    margin-bottom: 8px;
+    background: color-mix(in srgb, var(--c) 16%, transparent);
+}
+
+.subj-go {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.skel {
+    height: 150px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, var(--line), var(--paper), var(--line));
+    background-size: 200% 100%;
+    animation: shimmer 1.3s linear infinite;
+}
+
+@keyframes shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skel {
+        animation: none;
+    }
+    .subj-card {
+        transition: none;
+    }
+}
