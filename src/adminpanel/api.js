@@ -58,3 +58,49 @@ export const fieldErrors = (err) => {
     });
     return out;
 };
+
+
+
+// multipart upload (do not set Content-Type: the browser adds the boundary)
+export async function apiUpload(path, formData, token) {
+    let res;
+    try {
+        res = await fetch(API_URL + path, {
+            method: "POST",
+            headers: { Accept: "application/json", Authorization: "Bearer " + token },
+            body: formData,
+        });
+    } catch {
+        throw new ApiError("Cannot reach the server. Make sure the API is running.", 0);
+    }
+
+    let data = {};
+    try {
+        data = await res.json();
+    } catch {}
+
+    if (!res.ok) {
+        throw new ApiError(data.message || "Request failed (" + res.status + ").", res.status, data.errors);
+    }
+    return data;
+}
+
+// download a file that needs the Bearer token
+export async function apiDownload(path, token, filename) {
+    let res;
+    try {
+        res = await fetch(API_URL + path, { headers: { Authorization: "Bearer " + token } });
+    } catch {
+        throw new ApiError("Cannot reach the server. Make sure the API is running.", 0);
+    }
+    if (!res.ok) throw new ApiError("Download failed (" + res.status + ").", res.status);
+
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+}

@@ -3,20 +3,20 @@ import Dashboard from "./Dashboard";
 import Subjects from "./Subjects";
 import Exams from "./Exams";
 import Questions from "./Questions";
+import ImportData from "./ImportData";
 import Users from "./Users";
+import Students from "./Students";
+import Results from "./Results";
+import Settings from "./Settings";
 import "./css/admin.css";
 import "./css/admin-extra.css";
-import Students from "./Students";
-import ImportJson from "./Importjson ";
-import Settings from "./Settings";
-import Results from "./Results";
 
 const MENU = [
     { id: "dashboard", icon: "📊", label: "Dashboard" },
     { id: "subjects", icon: "📚", label: "Subjects" },
     { id: "exams", icon: "📝", label: "Exams" },
     { id: "questions", icon: "❓", label: "Questions" },
-    { id: "import", icon: "⬆️", label: "Import JSON" },
+    { id: "import", icon: "⬆️", label: "Import data" },
     { id: "users", icon: "👤", label: "Users" },
     { id: "students", icon: "👥", label: "Students" },
     { id: "results", icon: "🏆", label: "Results" },
@@ -33,7 +33,7 @@ function ComingSoon({ title }) {
     );
 }
 
-function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit, onUserUpdate }){
+function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit, onUserUpdate }) {
     const [page, setPage] = useState("dashboard");
     const [params, setParams] = useState({});
     const [open, setOpen] = useState(false);
@@ -58,9 +58,9 @@ function AdminPanel({ user, token, theme, onToggleTheme, onLogout, onExit, onUse
     else if (page === "subjects") content = <Subjects {...common} />;
     else if (page === "exams") content = <Exams key={"e" + (params.subject_id || "all")} subjectId={params.subject_id} {...common} />;
     else if (page === "questions") content = <Questions key={"q" + (params.exam_id || "all")} examId={params.exam_id} {...common} />;
-    else if (page === "students") content = <Students token={token} onUnauthorized={onLogout} />;
-    else if (page === "import") content = <ImportJson {...common} />;
+    else if (page === "import") content = <ImportData {...common} />;
     else if (page === "users") content = <Users token={token} me={u} onUnauthorized={onLogout} />;
+    else if (page === "students") content = <Students token={token} onUnauthorized={onLogout} />;
     else if (page === "results") content = <Results token={token} onUnauthorized={onLogout} />;
     else if (page === "settings") content = <Settings token={token} user={u} onUnauthorized={onLogout} onUserUpdate={onUserUpdate} />;
     else content = <ComingSoon title={current.label} />;
