@@ -1,5 +1,6 @@
 // Talks to the Laravel API: POST /api/login, /api/register, /api/logout
-export const API_URL = "http://127.0.0.1:8000/api"; // change this when you deploy
+// export const API_URL = "http://127.0.0.1:8000/api";
+export const API_URL = "https://onlinexam.rupkathatoursbd.com/api"; // change this when you deploy
 
 const KEY = "auth_session_v1";
 
